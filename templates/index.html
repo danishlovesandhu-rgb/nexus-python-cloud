@@ -1,0 +1,73 @@
+templates/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXUS-X Cloud</title>
+<style>
+body {
+  background: #050505;
+  color: #00ffff;
+  font-family: monospace;
+  padding: 20px;
+}
+h1 { color: #7777ff; letter-spacing: 5px; }
+input, button {
+  background: #111;
+  color: #00ffff;
+  border: 1px solid #5555ff;
+  padding: 12px;
+  margin: 10px 0;
+  width: 100%;
+}
+pre {
+  background: black;
+  color: #00ff66;
+  padding: 15px;
+  white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+<h1>NEXUS-X</h1>
+<p>CARX STREET CLOUD TOOL</p>
+<p>PYTHON CLOUD EXECUTION</p>
+
+<input id="key" type="password" placeholder="Access Key">
+<input id="file" type="file" accept=".py">
+<button onclick="runScript()">RUN SCRIPT</button>
+
+<h3>EXECUTION OUTPUT</h3>
+<pre id="output">System Ready...</pre>
+
+<script>
+async function runScript() {
+ const file = document.getElementById("file").files[0];
+ const key = document.getElementById("key").value;
+ const output = document.getElementById("output");
+
+ if (!file) {
+   output.textContent = "Select Python file first!";
+   return;
+ }
+
+ const data = new FormData();
+ data.append("script", file);
+
+ output.textContent = "Executing...";
+
+ try {
+   const response = await fetch("/run", {
+     method: "POST",
+     headers: {"X-API-Key": key},
+     body: data
+   });
+   const result = await response.json();
+   output.textContent = JSON.stringify(result, null, 2);
+ } catch (error) {
+   output.textContent = error.message;
+ }
+}
+</script>
+</body>
+</html>
